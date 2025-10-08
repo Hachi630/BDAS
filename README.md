@@ -2,16 +2,52 @@
 
 This project provides complete code for analyzing the Online Retail II dataset using PySpark in Google Colab.
 
+## Troubleshooting
+
+### PySpark Connection Issues in Local Environment
+
+If you encounter `Py4JJavaError` or `SocketTimeoutException` when running PySpark locally, try these solutions:
+
+#### Solution 1: Use the Enhanced Configuration
+The updated code includes better Spark configurations for local environments:
+- Increased worker timeout
+- Memory optimization
+- Arrow optimization disabled for compatibility
+
+#### Solution 2: Use Pandas-Only Version
+If PySpark continues to fail, use the pandas-only analysis:
+- Run the "Alternative: Pandas-Only Analysis" section in the notebook
+- Or use `pyspark_online_retail_analysis_local.py` script
+
+#### Solution 3: Environment Setup
+Ensure you have the correct Java version:
+```bash
+# Check Java version (should be Java 8 or 11)
+java -version
+
+# Set JAVA_HOME if needed
+export JAVA_HOME=/path/to/java
+```
+
+#### Solution 4: Install Required Dependencies
+```bash
+pip install pyspark pandas openpyxl pyarrow
+```
+
 ## File Description
 
-- `pyspark_online_retail_analysis.py` - Complete Python script version
-- `Online_Retail_II_Analysis.ipynb` - Jupyter Notebook version (recommended for use in Google Colab)
+- `pyspark_online_retail_analysis.py` - Complete Python script version (enhanced for local environments)
+- `pyspark_online_retail_analysis_local.py` - Pandas-only version for environments where PySpark fails
+- `Online_Retail_II_Analysis.ipynb` - Jupyter Notebook version with error handling and pandas fallback
 - `online_retail_II.xlsx` - Original dataset file
 
 ## Steps to Use in Google Colab
 
-### 1. Upload Files
-First, upload the `online_retail_II.xlsx` file to your Google Colab environment.
+### 1. No File Upload Required
+The code automatically loads the dataset from GitHub repository:
+- Username: `Hachi630`
+- Repository: `BDAS`
+- File: `online_retail_II.xlsx`
 
 ### 2. Run Notebook
 Open the `Online_Retail_II_Analysis.ipynb` file and run all cells in sequence.
@@ -25,6 +61,7 @@ The code implements the following features:
 - Set appropriate log levels
 
 #### Data Loading
+- Automatically load Excel file from GitHub repository (Hachi630/BDAS)
 - Use pandas to read Excel file (since PySpark cannot directly read Excel)
 - Convert pandas DataFrame to Spark DataFrame
 - Ensure DataFrame is named `df` for consistency
@@ -52,10 +89,11 @@ After running the code, you will see:
 
 ## Notes
 
-- Ensure necessary packages are installed in Google Colab: `pyspark`, `pandas`, `openpyxl`
-- Dataset file needs to be uploaded to Colab environment
+- No need to upload dataset file - automatically loads from GitHub
+- Ensure necessary packages are installed: `pyspark`, `pandas`, `openpyxl`
 - Code includes detailed English comments for easy understanding of each step
 - All analysis uses PySpark's distributed computing capabilities
+- GitHub URL: `https://raw.githubusercontent.com/Hachi630/BDAS/main/online_retail_II.xlsx`
 
 ## Dataset Information
 

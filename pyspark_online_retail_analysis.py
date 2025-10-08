@@ -11,11 +11,18 @@ from pyspark.sql.functions import col, sum as spark_sum, count, when, isnan, isn
 import pandas as pd
 
 # Initialize Spark session
-# In Google Colab, we need to set some configurations to ensure Spark works properly
+# Configure Spark for both local and Colab environments
 spark = SparkSession.builder \
     .appName("OnlineRetailAnalysis") \
     .config("spark.sql.adaptive.enabled", "true") \
     .config("spark.sql.adaptive.coalescePartitions.enabled", "true") \
+    .config("spark.sql.execution.arrow.pyspark.enabled", "true") \
+    .config("spark.sql.execution.arrow.maxRecordsPerBatch", "10000") \
+    .config("spark.driver.memory", "2g") \
+    .config("spark.executor.memory", "2g") \
+    .config("spark.sql.execution.arrow.pyspark.fallback.enabled", "true") \
+    .config("spark.python.worker.timeout", "300") \
+    .config("spark.python.worker.reuse", "true") \
     .getOrCreate()
 
 # Set log level to reduce output noise
@@ -25,22 +32,36 @@ print("Spark session initialized successfully!")
 print(f"Spark version: {spark.version}")
 
 # Since PySpark cannot directly read Excel files, we use pandas to read and then convert to Spark DataFrame
-print("\nReading Excel file...")
+print("\nReading Excel file from GitHub...")
 
-# Use pandas to read Excel file
-pandas_df = pd.read_excel('online_retail_II.xlsx')
+# GitHub repository information
+github_user = "Hachi630"
+github_repo = "BDAS"
+file_path = "online_retail_II.xlsx"
+
+# Construct GitHub raw URL
+github_url = f"https://raw.githubusercontent.com/{github_user}/{github_repo}/main/{file_path}"
+
+# Use pandas to read Excel file from GitHub
+pandas_df = pd.read_excel(github_url)
 
 # Convert pandas DataFrame to Spark DataFrame
 # Ensure DataFrame is named df for consistency
 df = spark.createDataFrame(pandas_df)
 
-print("Data successfully loaded into Spark DataFrame!")
+print("Data successfully loaded from GitHub into Spark DataFrame!")
 
 # Check data dimensions
 print("\n=== Data Dimension Information ===")
-# Get row count
-row_count = df.count()
-print(f"Dataset row count: {row_count:,}")
+# Get row count with error handling
+try:
+    row_count = df.count()
+    print(f"Dataset row count: {row_count:,}")
+except Exception as e:
+    print(f"Error getting row count with Spark: {e}")
+    print("Using pandas DataFrame for row count...")
+    row_count = len(pandas_df)
+    print(f"Dataset row count (from pandas): {row_count:,}")
 
 # Get column count
 column_count = len(df.columns)
